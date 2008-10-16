@@ -173,7 +173,7 @@ module CommentTags
   desc %{Builds a text_author form field for comments}
   tag 'comments:text_author_tag' do |tag|
     attrs = tag.attr.symbolize_keys
-    r = %{<textarea}
+    r = %{<input}
     r << %{ id="comment_#{attrs[:name]}"}
     r << %{ name="author[#{attrs[:name]}]"}
     r << %{ class="#{attrs[:class]}"} if attrs[:class]
@@ -183,13 +183,13 @@ module CommentTags
     if content = (tag.locals.product.last_comment ? tag.locals.product.last_comment.send(attrs[:name]) : attrs[:content])
       r << content
     end
-    r << %{</textarea>}
+    r << %{</input>}
   end
 
   desc %{Builds a text_author_email form field for comments}
   tag 'comments:text_author_email_tag' do |tag|
     attrs = tag.attr.symbolize_keys
-    r = %{<textarea}
+    r = %{<input}
     r << %{ id="comment_#{attrs[:name]}"}
     r << %{ name="author_email[#{attrs[:name]}]"}
     r << %{ class="#{attrs[:class]}"} if attrs[:class]
@@ -199,7 +199,7 @@ module CommentTags
     if content = (tag.locals.product.last_comment ? tag.locals.product.last_comment.send(attrs[:name]) : attrs[:content])
       r << content
     end
-    r << %{</textarea>}
+    r << %{</input>}
   end
 
   %w(submit reset).each do |type|
