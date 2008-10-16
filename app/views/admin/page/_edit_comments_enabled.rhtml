@@ -1,8 +1,8 @@
 <p style="clear:left">
-  <label for="page_enable_comments">Allow Comments on this page?</label> 
-  <%= check_box "page", "enable_comments" %>
+  <label for="product_enable_comments">Allow Comments on this product?</label> 
+  <%= check_box "product", "enable_comments" %>
   
   <small>
-    <%= link_to "Currently #{@page.comments_count} &mdash; View comments", admin_page_comments_path(:page_id => @page.id) unless @page.new_record? or @page.comments_count < 1 %>
+    <%#= link_to "Currently #{@product.comments_count} &mdash; View comments", admin_product_comments_path(:product_id => @product.id) unless @product.new_record? or @product.comments_count < 1 %>
   </small>
 </p>

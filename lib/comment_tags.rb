@@ -4,38 +4,38 @@ module CommentTags
   desc "Provides tags and behaviors to support comments in Radiant."
   
   desc %{
-    Renders the contained elements if comments are enabled on the page. 
+    Renders the contained elements if comments are enabled on the product. 
   }
   tag "if_enable_comments" do |tag|
-    tag.expand if (tag.locals.page.enable_comments?)
+    tag.expand if (tag.locals.product.enable_comments?)
   end
   
   desc %{
-    Renders the contained elements unless comments are enabled on the page. 
+    Renders the contained elements unless comments are enabled on the product. 
   }
   tag "unless_enable_comments" do |tag|
-    tag.expand unless (tag.locals.page.enable_comments?)
+    tag.expand unless (tag.locals.product.enable_comments?)
   end
   
   desc %{
-    Renders the contained elements if the page has comments. 
+    Renders the contained elements if the product has comments. 
   }
   tag "if_comments" do |tag|
-    tag.expand if tag.locals.page.has_visible_comments?
+    tag.expand if tag.locals.product.has_visible_comments?
   end
   
   desc %{
-    Renders the contained elements if the page has comments _or_ comment is enabled on it.
+    Renders the contained elements if the product has comments _or_ comment is enabled on it.
   }
   tag "if_comments_or_enable_comments" do |tag|
-    tag.expand if(tag.locals.page.has_visible_comments? || tag.locals.page.enable_comments?)
+    tag.expand if(tag.locals.product.has_visible_comments? || tag.locals.product.enable_comments?)
   end
   
   desc %{ 
     Gives access to comment-related tags
   }
   tag "comments" do |tag|
-    comments = tag.locals.page.approved_comments
+    comments = tag.locals.product.approved_comments
     tag.expand
   end
   
@@ -43,9 +43,9 @@ module CommentTags
     Cycles through each comment and renders the enclosed tags for each. 
   }
   tag "comments:each" do |tag|
-    page = tag.locals.page
-    comments = page.approved_comments.to_a
-    comments << page.selected_comment if page.selected_comment && page.selected_comment.unapproved?
+    product = tag.locals.product
+    comments = product.approved_comments.to_a
+    comments << product.selected_comment if product.selected_comment && product.selected_comment.unapproved?
     result = []
     comments.each do |comment|
       tag.locals.comment = comment
@@ -106,7 +106,7 @@ module CommentTags
     the user has just posted
   }
   tag "comments:field:if_selected" do |tag|
-    tag.expand if tag.locals.comment == tag.locals.page.selected_comment
+    tag.expand if tag.locals.comment == tag.locals.product.selected_comment
   end
   
   desc %{
@@ -132,14 +132,14 @@ module CommentTags
   tag "comments:form" do |tag|
     @tag_attr = { :class => "comment_form" }.update( tag.attr.symbolize_keys )
     results = %Q{
-      <form action="#{tag.locals.page.url}comments" method="post" id="comment_form">
+      <form action="/comments" method="post" id="comment_form">
         #{tag.expand}
       </form>
     }
   end
-  
+
   tag 'comments:error' do |tag|
-    if comment = tag.locals.page.last_comment
+    if comment = tag.locals.product.last_comment
       if on = tag.attr['on']
         if error = comment.errors.on(on)
           tag.locals.error_message = error
@@ -163,13 +163,45 @@ module CommentTags
       r << %{ id="comment_#{attrs[:name]}"}
       r << %{ name="comment[#{attrs[:name]}]"}
       r << %{ class="#{attrs[:class]}"} if attrs[:class]
-      if value = (tag.locals.page.last_comment ? tag.locals.page.last_comment.send(attrs[:name]) : attrs[:value])
+      if value = (tag.locals.product.last_comment ? tag.locals.product.last_comment.send(attrs[:name]) : attrs[:value])
         r << %{ value="#{value}" }
       end
       r << %{ />}
     end
   end
   
+  desc %{Builds a text_author form field for comments}
+  tag 'comments:text_author_tag' do |tag|
+    attrs = tag.attr.symbolize_keys
+    r = %{<textarea}
+    r << %{ id="comment_#{attrs[:name]}"}
+    r << %{ name="author[#{attrs[:name]}]"}
+    r << %{ class="#{attrs[:class]}"} if attrs[:class]
+    r << %{ rows="#{attrs[:rows]}"} if attrs[:rows]
+    r << %{ cols="#{attrs[:cols]}"} if attrs[:cols]
+    r << %{>}
+    if content = (tag.locals.product.last_comment ? tag.locals.product.last_comment.send(attrs[:name]) : attrs[:content])
+      r << content
+    end
+    r << %{</textarea>}
+  end
+
+  desc %{Builds a text_author_email form field for comments}
+  tag 'comments:text_author_email_tag' do |tag|
+    attrs = tag.attr.symbolize_keys
+    r = %{<textarea}
+    r << %{ id="comment_#{attrs[:name]}"}
+    r << %{ name="author_email[#{attrs[:name]}]"}
+    r << %{ class="#{attrs[:class]}"} if attrs[:class]
+    r << %{ rows="#{attrs[:rows]}"} if attrs[:rows]
+    r << %{ cols="#{attrs[:cols]}"} if attrs[:cols]
+    r << %{>}
+    if content = (tag.locals.product.last_comment ? tag.locals.product.last_comment.send(attrs[:name]) : attrs[:content])
+      r << content
+    end
+    r << %{</textarea>}
+  end
+
   %w(submit reset).each do |type|
     desc %{Builds a #{type} form button for comments.}
     tag "comments:#{type}_tag" do |tag|
@@ -193,7 +225,7 @@ module CommentTags
     r << %{ rows="#{attrs[:rows]}"} if attrs[:rows]
     r << %{ cols="#{attrs[:cols]}"} if attrs[:cols]
     r << %{>}
-    if content = (tag.locals.page.last_comment ? tag.locals.page.last_comment.send(attrs[:name]) : attrs[:content])
+    if content = (tag.locals.product.last_comment ? tag.locals.product.last_comment.send(attrs[:name]) : attrs[:content])
       r << content
     end
     r << %{</textarea>}
@@ -219,6 +251,6 @@ module CommentTags
   
   desc %{Prints the number of comments. }
   tag "comments:count" do |tag|
-    tag.locals.page.approved_comments.count
+    tag.locals.product.approved_comments.count
   end
 end

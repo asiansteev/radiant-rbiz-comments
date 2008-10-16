@@ -2,33 +2,54 @@ class CommentsController < ApplicationController
   
   no_login_required
   skip_before_filter :verify_authenticity_token
-  before_filter :find_page
+  before_filter :find_product
   before_filter :set_host
 
   def index
-    @page.selected_comment = @page.comments.find_by_id(flash[:selected_comment])
-    render :text => @page.render
+    @product.selected_comment = @product.comments.find_by_id(flash[:selected_comment])
+    render :text => @product.render
   end
   
   def create
-    comment = @page.comments.build(params[:comment])
-    comment.request = request
+    comment = Comment.new
+    puts params.to_s
+    comment.content = "#{params[:comment]}".strip
+    @auth = "#{params[:author][0]}".strip
+    if @auth.empty?
+      comment.author = 'not specified'
+    else
+      comment.author = @auth 
+    end
+    @auth_email = "#{params[:author_email][0]}".strip
+    
+    if @auth_email.empty?
+      comment.author_email = 'not specified'
+    else
+      comment.author_email = @auth_email
+    end
+
     comment.save!
+    @product.comments << comment
+    puts comment.errors.full_messages.inspect
     
     ResponseCache.instance.clear
     CommentMailer.deliver_comment_notification(comment) if Radiant::Config['comments.notification'] == "true"
     
     flash[:selected_comment] = comment.id
-    redirect_to "#{@page.url}comments#comment-#{comment.id}"
+    redirect_to "/products/#{@product.slug}#comment-#{comment.id}"
   rescue ActiveRecord::RecordInvalid
-    @page.last_comment = comment
-    render :text => @page.render
+    @product.last_comment = comment
+    #render :text => @product.render
+    puts comment.errors.full_messages.inspect
+    redirect_to "/products/#{@product.slug}#comment-#{comment.id}"
   end
   
   private
   
-    def find_page
-      @page = Page.find_by_url(params[:url].join("/"))
+    def find_product
+      # was find_by_url, changed to find_by_slug
+      @product = Product.find_by_id(params['product_id'])
+      puts @product
     end
     
     def set_host

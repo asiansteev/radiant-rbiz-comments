@@ -1,4 +1,4 @@
-A new comment has been posted on the <%= @site_name %> article <%= @comment.page.title %> (<%= @page_url %>)
+A new comment has been posted on the <%= @site_name %> article <%= @comment.product.title %> (<%= @product_url %>)
 
   Author : <%= @comment.author %> (IP: <%= @comment.author_ip %>)
   E-mail : <%= @comment.author_email %>
@@ -12,7 +12,7 @@ A new comment has been posted on the <%= @site_name %> article <%= @comment.page
 
 
   You can see all comments on this post here: 
-      <%= admin_page_comments_url(@comment.page) %>;
+      <%= admin_product_comments_url(@comment.product) %>;
 
   Approve it: 
       <%=  approve_admin_comment_url(@comment) %>

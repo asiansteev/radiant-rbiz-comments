@@ -1,10 +1,10 @@
 <td class="comment_link">
   <% if page.respond_to?('enable_comments') %>
   <small>
-    <% if page.enable_comments %>
-      <%= link_to "#{page.comments_count} comments", admin_page_comments_path(:page_id => page.id) %>
+    <% if product.enable_comments %>
+      <%= link_to "#{product.comments_count} comments", admin_product_comments_path(:product_id => product.id) %>
     <% else %>
-      <%= link_to "Enable", admin_page_comments_path(:page_id => page.id, :action => :enable) %>
+      <%= link_to "Enable", admin_product_comments_path(:product_id => product.id, :action => :enable) %>
     <% end %>
   </small>
   <% end %>

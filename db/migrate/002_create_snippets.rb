@@ -48,7 +48,7 @@ CONTENT
     Snippet.new do |s|
       s.name = "comment_form"
       s.content = <<CONTENT
-<r:page>
+<r:product>
   <r:if_enable_comments>
     <r:comments:form>
       <h3>Post a comment</h3>
@@ -74,7 +74,7 @@ CONTENT
 
     </r:comments:form>
   </r:if_enable_comments>
-</r:page>
+</r:product>
 CONTENT
     end.save
   end

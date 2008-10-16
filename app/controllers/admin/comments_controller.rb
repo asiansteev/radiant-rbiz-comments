@@ -9,11 +9,11 @@ class Admin::CommentsController < ApplicationController
     else
       nil
     end
-    @page = Page.find(params[:page_id]) if params[:page_id]
-    @comments = if @page.nil? 
-      Comment.paginate(:page => params[:page], :order => "created_at DESC", :conditions => conditions)
+    @product = Product.find(params[:product_id]) if params[:product_id]
+    @comments = if @product.nil? 
+      Comment.paginate(:page => params[:product], :order => "created_at DESC", :conditions => conditions)
     else
-      @page.comments.paginate(:page => params[:page], :conditions => conditions)
+      @product.comments.paginate(:product => params[:product], :conditions => conditions)
     end
     
     respond_to do |format|
@@ -26,7 +26,7 @@ class Admin::CommentsController < ApplicationController
     @comment = Comment.find(params[:id])
     @comment.destroy
     announce_comment_removed
-    ResponseCache.instance.expire_response(@comment.page.url)
+    ResponseCache.instance.expire_response(@comment.product.slug)
     redirect_to :back
   end
   
@@ -50,26 +50,26 @@ class Admin::CommentsController < ApplicationController
   end
   
   def enable
-    @page = Page.find(params[:page_id])
-    @page.enable_comments = 1
-    @page.save!
-    flash[:notice] = "Comments has been enabled for #{@page.title}"
-    redirect_to page_index_path
+    @product = Product.find(params[:product_id])
+    @product.enable_comments = 1
+    @product.save!
+    flash[:notice] = "Comments has been enabled for #{@product.title}"
+    redirect_to product_index_path
   end
   
   def approve
     @comment = Comment.find(params[:id])
     @comment.approve!
-    ResponseCache.instance.expire_response(@comment.page.url)
-    flash[:notice] = "Comment was successfully approved on page #{@comment.page.title}"
+    ResponseCache.instance.expire_response("/products/#{@comment.product.slug}")
+    flash[:notice] = "Comment was successfully approved on product #{@comment.product.name}"
     redirect_to :back
   end
   
   def unapprove
     @comment = Comment.find(params[:id])
     @comment.unapprove!
-    ResponseCache.instance.expire_response(@comment.page.url)
-    flash[:notice] = "Comment was successfully unapproved on page #{@comment.page.title}"
+    ResponseCache.instance.expire_response(@comment.product.slug)
+    flash[:notice] = "Comment was successfully unapproved on product #{@comment.product.title}"
     redirect_to :back
   end
   
