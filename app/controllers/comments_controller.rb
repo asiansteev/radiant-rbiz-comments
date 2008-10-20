@@ -12,15 +12,14 @@ class CommentsController < ApplicationController
   
   def create
     comment = Comment.new
-    puts params.to_s
-    comment.content = "#{params[:comment]}".strip
-    @auth = "#{params[:author][0]}".strip
+    comment.content = "#{params[:comment][:content]}".strip
+    @auth = "#{params[:comment][:author]}".strip
     if @auth.empty?
       comment.author = 'not specified'
     else
       comment.author = @auth 
     end
-    @auth_email = "#{params[:author_email][0]}".strip
+    @auth_email = "#{params[:comment][:author_email]}".strip
     
     if @auth_email.empty?
       comment.author_email = 'not specified'
