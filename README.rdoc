@@ -1,6 +1,6 @@
-= Radiant Comments Extension
+= Radiant RBiz Comments Extension
 
-Adds blog-like comment functionality to Radiant. 
+Adds blog-like comment functionality to RBiz products. 
 
 == Patches
 
@@ -9,6 +9,7 @@ This software "works for me", but it may not work for you, depending on your par
 == Dependencies
 
 * Requires Radiant 0.6.7 or greater.
+* Requires RBiz (http://github.com/rubidine/rbiz/)
 * Requires will_paginate Rails plugin (http://github.com/mislav/will_paginate/tree/master)
 * Requires fastercsv 1.2.3 or greater.
 

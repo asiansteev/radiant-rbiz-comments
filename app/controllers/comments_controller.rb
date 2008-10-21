@@ -38,7 +38,6 @@ class CommentsController < ApplicationController
     redirect_to "/products/#{@product.slug}#comment-#{comment.id}"
   rescue ActiveRecord::RecordInvalid
     @product.last_comment = comment
-    #render :text => @product.render
     puts comment.errors.full_messages.inspect
     redirect_to "/products/#{@product.slug}#comment-#{comment.id}"
   end
@@ -48,7 +47,6 @@ class CommentsController < ApplicationController
     def find_product
       # was find_by_url, changed to find_by_slug
       @product = Product.find_by_id(params['product_id'])
-      puts @product
     end
     
     def set_host
